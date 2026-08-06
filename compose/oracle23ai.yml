@@ -1,0 +1,36 @@
+services:
+
+  oracle23ai:
+
+    image: container-registry.oracle.com/database/free:latest
+
+    container_name: rpdm-oracle23ai
+
+    hostname: oracle23ai
+
+    restart: unless-stopped
+
+    profiles:
+      - core
+
+    environment:
+      ORACLE_PWD: ${ORACLE_PWD}
+      ORACLE_CHARACTERSET: ${ORACLE_CHARACTERSET}
+
+    ports:
+      - "127.0.0.1:1524:1521"
+
+    volumes:
+      - /u01/databases/oracle23ai/data:/opt/oracle/oradata
+
+    shm_size: 4gb
+
+    healthcheck:
+      test: ["CMD", "/opt/oracle/checkDBStatus.sh"]
+      interval: 1m
+      timeout: 30s
+      retries: 30
+      start_period: 15m
+
+    networks:
+      - msk-net

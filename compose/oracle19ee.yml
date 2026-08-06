@@ -1,0 +1,38 @@
+services:
+
+  oracle19ee:
+
+    image: oracle/database:19.3.0-ee
+
+    container_name: rpdm-oracle-ee
+
+    hostname: oracle19ee
+
+    restart: unless-stopped
+
+    profiles:
+      - core
+
+    environment:
+      ORACLE_PWD: ${ORACLE_PWD}
+      ORACLE_CHARACTERSET: ${ORACLE_CHARACTERSET}
+      ORACLE_SID: ORCLCDB
+      ORACLE_PDB: ORCLPDB1
+
+    volumes:
+      - /u01/databases/oracle19ee/data:/opt/oracle/oradata
+
+    ports:
+      - "127.0.0.1:1522:1521"
+
+    shm_size: 4gb
+
+    networks:
+      - msk-net
+
+    healthcheck:
+      test: ["CMD", "/opt/oracle/checkDBStatus.sh"]
+      interval: 1m
+      timeout: 30s
+      retries: 30
+      start_period: 15m

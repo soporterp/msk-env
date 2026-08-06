@@ -1,0 +1,39 @@
+services:
+
+  mssql:
+
+    image: mcr.microsoft.com/mssql/server:2022-latest
+
+    container_name: rpdm-mssql
+
+    hostname: mssql
+
+    restart: unless-stopped
+
+    profiles:
+      - core
+
+    environment:
+      ACCEPT_EULA: ${ACCEPT_EULA}
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      TZ: ${TZ}
+
+    ports:
+      - "127.0.0.1:1433:1433"
+
+    volumes:
+      - /u01/databases/mssql/data:/var/opt/mssql
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$MSSQL_SA_PASSWORD\" -C -Q \"SELECT 1\" || exit 1"
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+      start_period: 60s
+
+    networks:
+      - msk-net

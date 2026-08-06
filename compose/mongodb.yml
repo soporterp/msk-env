@@ -1,0 +1,47 @@
+services:
+
+  mongodb:
+
+    image: mongo:8
+
+    container_name: rpdm-mongodb
+
+    hostname: mongodb
+
+    restart: unless-stopped
+
+    profiles:
+      - core
+
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      TZ: ${TZ}
+
+    ports:
+      - "127.0.0.1:27017:27017"
+
+    volumes:
+      - /u01/databases/mongodb/data:/data/db
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mongosh",
+          "--quiet",
+          "-u",
+          "${MONGO_INITDB_ROOT_USERNAME}",
+          "-p",
+          "${MONGO_INITDB_ROOT_PASSWORD}",
+          "--authenticationDatabase",
+          "admin",
+          "--eval",
+          "db.runCommand({ ping: 1 }).ok"
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+    networks:
+      - msk-net

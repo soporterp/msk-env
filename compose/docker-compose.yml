@@ -1,0 +1,5 @@
+name: msk-lab
+
+networks:
+  msk-net:
+    external: true
