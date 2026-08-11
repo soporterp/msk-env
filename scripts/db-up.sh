@@ -2,28 +2,39 @@
 
 set -e
 
-PROFILE=${1:-core}
-
-BASE_CMD="docker compose --env-file .env --profile ${PROFILE}"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+COMPOSE_DIR="$ROOT_DIR/compose"
+ENV_FILE="$COMPOSE_DIR/.env"
 
 echo "======================================"
 echo " Iniciando laboratorio RPDM"
-echo " Perfil: ${PROFILE}"
+echo " Perfil: core"
 echo "======================================"
 
-FILES=""
+if [ ! -f "$ENV_FILE" ]; then
+    echo "[ERROR] No existe:"
+    echo "        $ENV_FILE"
+    echo
+    echo "Copia .env.example como .env y configura los valores."
+    exit 1
+fi
 
-FILES="$FILES -f docker-compose.yml"
+cd "$COMPOSE_DIR"
 
-[ -f oracle19ee.yml ] && FILES="$FILES -f oracle19ee.yml"
-[ -f oracle19se2.yml ] && FILES="$FILES -f oracle19se2.yml"
-[ -f oracle23ai.yml ] && FILES="$FILES -f oracle23ai.yml"
-[ -f postgres.yml ] && FILES="$FILES -f postgres.yml"
-[ -f mysql.yml ] && FILES="$FILES -f mysql.yml"
-[ -f mongodb.yml ] && FILES="$FILES -f mongodb.yml"
-[ -f mssql.yml ] && FILES="$FILES -f mssql.yml"
-
-eval ${BASE_CMD} ${FILES} up -d
+docker compose \
+    --env-file "$ENV_FILE" \
+    --profile core \
+    -f docker-compose.yml \
+    -f oracle19ee.yml \
+    -f oracle19se2.yml \
+    -f oracle23ai.yml \
+    -f postgres.yml \
+    -f mysql.yml \
+    -f mongodb.yml \
+    -f mssql.yml \
+    up -d
 
 echo
-docker ps
+docker ps \
+    --filter "name=rpdm-" \
+    --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
