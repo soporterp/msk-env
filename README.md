@@ -19,3 +19,21 @@ scripts/     -> Administración del laboratorio
 
 ./scripts/db-down.sh
 ```
+## Ingreso a morotores individuales
+
+```bash
+./scripts/connect-oracle19ee.sh
+
+./scripts/connect-oracle19se2.sh
+
+./scripts/connect-oracle23ai.sh
+
+./scripts/connect-postgres.sh
+
+./scripts/connect-mysql.sh
+
+./scripts/connect-mongodb.sh
+
+./scripts/connect-mssql.sh
+```
+
