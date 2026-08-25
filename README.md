@@ -19,7 +19,7 @@ scripts/     -> Administración del laboratorio
 
 ./scripts/db-down.sh
 ```
-## Ingreso a morotores individuales
+## Ingreso a cada motor de base de datos individualmente
 
 ```bash
 ./scripts/connect-oracle19ee.sh
